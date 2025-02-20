@@ -39,6 +39,11 @@ function CreateAccount() {
     navigate('/movie-selection'); // Navigate to MovieSelection.js
   };
 
+  // Handle back button click (go to the previous page)
+  const handleBack = () => {
+    navigate('/'); // Go back to the previous page in the history stack
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -80,6 +85,7 @@ function CreateAccount() {
             {error && <p className="error-message">{error}</p>}
 
             <button type="submit">Next</button>
+            <button type="button" onClick={handleBack}>Back</button> {/* Back button */}
           </form>
         </div>
       </header>
