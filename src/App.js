@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
 import backgroundImage from './app.jpg'; // Replace with your actual image path
 import MovieRating from './MovieRating';
 
 function App() {
-  const [rating, setRating] = useState(3);
+  //const [rating, setRating] = useState(3);
 
   return (
     <div className="App">
