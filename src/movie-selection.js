@@ -1,10 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './App.css';
-import backgroundImage from './app.jpg'; // Replace with your actual image path
+import backgroundImage from './app.jpg';
 import MovieRating from './MovieRating';
 
-function App() {
-  //const [rating, setRating] = useState(3);
+function CreateAccount() {
+  const navigate = useNavigate(); // Hook for navigation
 
   return (
     <div className="App">
@@ -16,24 +17,17 @@ function App() {
 
         {/* Right Section - Purple Background with Form */}
         <div className="right-section">
-          <p className="App-title">Create an Account</p>
+          <p className="App-title">Rank Movies</p>
           <form className="question-form">
-            <label>
-              First Name:
-              <input type="text" name="first_name" />
-            </label>
-            <label>
-              Last Name:
-              <input type="text" name="last_name" />
-            </label>
             <MovieRating title="Mad Max: Fury Road (2015)" />
             <MovieRating title="Superbad (2007)" />
             <MovieRating title="Hereditary (2018)" />
             <MovieRating title="Blade Runner 2049 (2017)" />
             <MovieRating title="The Pursuit of Happyness (2006)" />
 
-
-            <button type="submit">Submit</button>
+            <button type="submit">Next</button>
+            {/* Back button navigates to Welcome.js */}
+            <button type="button" onClick={() => navigate('/create-account')}>Back</button>
           </form>
         </div>
       </header>
@@ -41,4 +35,4 @@ function App() {
   );
 }
 
-export default App;
+export default CreateAccount;

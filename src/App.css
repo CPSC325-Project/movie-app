@@ -63,7 +63,7 @@
 }
 
 .question-form button {
-  background-color: #efbf04;
+  background-color: #d4a304;
   color: white;
   font-size: 1.2rem;
   padding: 10px;
@@ -74,7 +74,7 @@
 }
 
 .question-form button:hover {
-  background-color: #d4a304;
+  background-color: black;
 }
 
 .slider-container {
