@@ -1,4 +1,6 @@
 import { Film } from 'lucide-react';
+import { Button } from '../components/Button';
+import { Link } from 'react-router-dom';
 
 const RECOMMENDED_MOVIES = [
   { title: "The Matrix", year: 1999, image: "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg" },
@@ -13,15 +15,36 @@ const formatWikipediaTitle = (title: string) => title.split(' ').join('_'); // C
 
 export function Recommend() {
   return (
-    <div className="min-h-screen bg-purple-900 flex flex-col items-center justify-center p-4">
-      {/* FlickPredict Logo */}
-      <div className="flex items-center justify-center mb-8">
+    <div className="min-h-screen bg-purple-900 flex flex-col items-center p-4 relative">
+      {/* Clickable FlickPredict Logo in Upper Left */}
+      <Link to="/" className="absolute top-4 left-4 flex items-center cursor-pointer">
         <Film size={32} className="text-yellow-500" />
         <h1 className="text-3xl font-bold ml-2 text-white">FlickPredict</h1>
-      </div>
+      </Link>
 
-      <h2 className="text-2xl font-bold text-white mb-4">FlickPredict recommended these movies for Alicia</h2>
+      {/* Navigation */}
+      <nav className="absolute top-0 right-0 p-6 z-10 flex gap-4">
+        <Link to="/about">
+          <Button variant="outline" className="border-yellow-400 text-white hover:bg-white/20">
+            About
+          </Button>
+        </Link>
+        <Link to="/how-to-use">
+          <Button variant="outline" className="border-yellow-400 text-white hover:bg-white/20">
+            How to Use
+          </Button>
+        </Link>
+        <Link to="#">
+          <Button variant="outline" className="border-yellow-400 text-white hover:bg-white/20">
+            Resources
+          </Button>
+        </Link>
+      </nav>
 
+      {/* Page Title */}
+      <h2 className="text-2xl font-bold text-white mt-20 mb-6">FlickPredict recommended these movies for Alicia</h2>
+
+      {/* Movie Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {RECOMMENDED_MOVIES.map((movie, index) => (
           <div key={index} className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -38,6 +61,7 @@ export function Recommend() {
               />
             </a>
 
+            {/* Movie Details */}
             <div className="p-4">
               <h3 className="text-lg font-bold">{movie.title}</h3>
               <p className="text-gray-600">Released: {movie.year}</p>
@@ -48,4 +72,3 @@ export function Recommend() {
     </div>
   );
 }
-
