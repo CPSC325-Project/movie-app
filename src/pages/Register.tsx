@@ -18,6 +18,16 @@ export function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if password and confirm password match
+    if (formData.password !== formData.confirmPassword) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        confirmPassword: 'Passwords do not match'
+      }));
+      return; // Prevent form submission if passwords don't match
+    }
+    
     // TODO: Implement registration logic with Supabase
     navigate('/rate-movies');
   };
@@ -26,7 +36,7 @@ export function Register() {
     <div className="min-h-screen bg-purple-50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
         <div className="flex items-center justify-center mb-8">
-          <Film size={32} className="text-purple-600" />
+          <Film size={32} className="text-yellow-500" />
           <h1 className="text-3xl font-bold ml-2 text-purple-900">FlickPredict</h1>
         </div>
 

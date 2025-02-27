@@ -16,12 +16,21 @@ export function Welcome() {
 
       {/* Navigation */}
       <nav className="absolute top-0 right-0 p-6 z-10 flex gap-4">
-        <Button variant="outline" className="border-white text-white hover:bg-white/10">
-          About
-        </Button>
-        <Button variant="outline" className="border-white text-white hover:bg-white/10">
-          How to Use
-        </Button>
+        <Link to="/about">
+          <Button variant="outline" className="border-yellow-400 text-white hover:bg-white/20">
+            About
+          </Button>
+        </Link>
+        <Link to="/how-to-use">
+          <Button variant="outline" className="border-yellow-400 text-white hover:bg-white/20">
+            How to Use
+          </Button>
+        </Link>
+        <Link to="#">
+          <Button variant="outline" className="border-yellow-400 text-white hover:bg-white/20">
+             Resources
+          </Button>
+        </Link>
       </nav>
 
       {/* Main Content */}

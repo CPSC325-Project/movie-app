@@ -1,3 +1,4 @@
+import { Film } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star, XCircle } from 'lucide-react';
@@ -73,11 +74,19 @@ export function RateMovies() {
 
   const handleRate = (rating: number | null) => {
     setRatings({ ...ratings, [SAMPLE_MOVIES[currentMovie].id]: rating });
-    
+
     if (currentMovie < SAMPLE_MOVIES.length - 1) {
-      setCurrentMovie(currentMovie + 1);
-    } else if (Object.keys(ratings).length >= 4) {
-      navigate('/recommendations');
+      // Adding delay before moving to the next movie
+      setTimeout(() => {
+        setCurrentMovie(currentMovie + 1);
+      }, 1000); // 1000 ms delay (1 second)
+    }
+
+    // If five movies have been rated, navigate to the recommendations page
+    if (Object.keys(ratings).length === 4) {  // When 5 ratings are complete, the length is 5
+      setTimeout(() => {
+        navigate('/recommend');
+      }, 250);  // Delay the navigation to allow users to see their last rating
     }
   };
 
@@ -85,61 +94,65 @@ export function RateMovies() {
   const currentRating = ratings[movie.id];
 
   return (
-    <div className="min-h-screen bg-purple-900 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden">
-        <img
-          src={movie.image}
-          alt={movie.title}
-          className="w-full h-64 object-cover"
-        />
-        
-        <div className="p-6">
-          <h2 className="text-2xl font-bold mb-2">{movie.title}</h2>
-          <p className="text-gray-600 mb-6">Released: {movie.year}</p>
+<div className="min-h-screen bg-purple-900 flex flex-col items-center justify-start p-4">
+  {/* Header with FlickPredict logo */}
+  <div className="flex items-center justify-center mb-8">
+    <Film size={32} className="text-yellow-500" />
+    <h1 className="text-3xl font-bold ml-2 text-white">FlickPredict</h1>
+  </div>
 
-          <div className="space-y-4">
-            <p className="text-lg font-medium">How would you rate this movie?</p>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex space-x-2">
-                {[1, 2, 3, 4, 5].map((rating) => (
-                  <button
-                    key={rating}
-                    onClick={() => handleRate(rating)}
-                    className="p-2 hover:bg-purple-100 rounded-full transition-colors"
-                  >
-                    <Star
-                      size={32}
-                      className={`${
-                        currentRating !== null && rating <= currentRating
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-gray-400'
-                      } transition-colors duration-200`}
-                    />
-                  </button>
-                ))}
-              </div>
+  {/* Main Content */}
+  <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden">
+    <img
+      src={movie.image}
+      alt={movie.title}
+      className="w-full h-64 object-cover"
+    />
 
-              <Button
-                variant="outline"
-                onClick={() => handleRate(null)}
-                className="flex items-center"
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-2">{movie.title}</h2>
+      <p className="text-gray-600 mb-6">Released: {movie.year}</p>
+
+      <div className="space-y-4">
+        <p className="text-lg font-medium">How would you rate this movie?</p>
+
+        <div className="flex items-center justify-between">
+          <div className="flex space-x-2">
+            {[1, 2, 3, 4, 5].map((rating) => (
+              <button
+                key={rating}
+                onClick={() => handleRate(rating)}
+                className="p-2 hover:bg-purple-100 rounded-full transition-colors"
               >
-                <XCircle className="mr-2" />
-                Haven't Watched
-              </Button>
-            </div>
+                <Star
+                  size={32}
+                  className={`${
+                    currentRating !== null && rating <= currentRating
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : 'text-gray-400'
+                  } transition-colors duration-200`}
+                />
+              </button>
+            ))}
           </div>
+
+          <Button
+            variant="outline"
+            onClick={() => handleRate(null)}
+            className="flex items-center"
+          >
+            <XCircle className="mr-2" />
+            Haven't Watched
+          </Button>
         </div>
       </div>
-
-      <div className="mt-4 text-white">
-        Rated {Object.keys(ratings).length} of 5 required movies
-      </div>
-
-      <div className="mt-2 text-yellow-400/80">
-        Movie {currentMovie + 1} of {SAMPLE_MOVIES.length}
-      </div>
     </div>
+  </div>
+
+  {/* Rating progress */}
+  <div className="mt-4 text-white">
+    Rated {Object.keys(ratings).length} of 5 required movies
+  </div>
+</div>
   );
 }
