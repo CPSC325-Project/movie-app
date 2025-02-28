@@ -45,6 +45,11 @@ export function HowToUse() {
           </Link>
         </div>
       </div>
+
+      {/* Footer */}
+      <div className="absolute bottom-0 left-0 right-0 bg-white p-4 text-center text-purple-900/70 text-sm z-10 border-t-4 border-purple-900">
+        © 2025 FlickPredict. All rights reserved.
+      </div>
     </div>
   );
 }
