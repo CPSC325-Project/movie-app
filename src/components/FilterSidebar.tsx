@@ -16,38 +16,17 @@ type FilterSidebarProps = {
 
 export function FilterSidebar({ onFilterChange, isOpen, onToggle }: FilterSidebarProps) {
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({
-    genres: [],
-    actors: [],
-    directors: [],
-    ratings: [],
-    decades: [],
+    id: [],
+    title: [],
+    year: [],
+    genres: []
   });
 
   const [categories, setCategories] = useState<FilterCategory[]>([
     {
       name: 'Genres',
-      options: ['Action', 'Adventure', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Thriller', 'Romance'],
+      options: ['Action', 'Adventure', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Thriller', 'Romance', 'Mystery', 'IMAX'],
       expanded: true,
-    },
-    {
-      name: 'Actors',
-      options: ['Keanu Reeves', 'Leonardo DiCaprio', 'Matthew McConaughey', 'Christian Bale', 'Ryan Gosling', 'Nicolas Cage'],
-      expanded: false,
-    },
-    {
-      name: 'Directors',
-      options: ['Christopher Nolan', 'Lana & Lilly Wachowski', 'Denis Villeneuve', 'Mark Steven Johnson'],
-      expanded: false,
-    },
-    {
-      name: 'Ratings',
-      options: ['5 Stars', '4+ Stars', '3+ Stars'],
-      expanded: false,
-    },
-    {
-      name: 'Decades',
-      options: ['1990s', '2000s', '2010s', '2020s'],
-      expanded: false,
     },
   ]);
 
