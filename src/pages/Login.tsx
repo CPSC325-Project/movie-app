@@ -6,20 +6,27 @@ import { Input } from '../components/Input';
 
 export function Login() {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
+
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Dummy Login Check
-    if (formData.email === 'adomingo' && formData.password === 'password') {
+    // Get stored user data from localStorage (if exists)
+    const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+    // console.log(storedUser);
+    const isAuthenticated = JSON.parse(localStorage.getItem('authenticated') || 'false');
+
+    // Basic check: compare email + require authenticated flag
+    if (formData.email === storedUser.email && isAuthenticated) {
       navigate('/recommend');
     } else {
-      setError('Invalid username or password.');
+      setError('Invalid email or password.');
     }
   };
 
@@ -35,7 +42,7 @@ export function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Username"
+            label="Email"
             type="text"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}

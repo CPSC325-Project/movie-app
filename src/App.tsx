@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Menu } from 'lucide-react';
 import { Welcome } from './pages/Welcome';
 import { Login } from './pages/Login';
-import { Register } from './pages/Register';
+import Register from './pages/Register';
 import { RateMovies } from './pages/RateMovies';
 import { About } from './pages/About';
 import { HowToUse } from './pages/HowToUse';

@@ -1,44 +1,61 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Film } from 'lucide-react';
-import { Button } from '../components/Button';
-import { Input } from '../components/Input';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export function Register() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+// Define form data type
+interface FormData {
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  confirmPassword: string;
+}
+
+// Define errors type
+interface Errors {
+  username?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  password?: string;
+  confirmPassword?: string;
+  form?: string;
+}
+
+// Email validation helper
+const validateEmail = (email: string) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+};
+
+// Password validation helper (customize as needed)
+const validatePassword = (password: string) => {
+  return password.length >= 6; // Example rule
+};
+
+const RegisterForm = () => {
+  const [formData, setFormData] = useState<FormData>({
     username: '',
     email: '',
+    firstName: '',
+    lastName: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Errors>({});
   const [showPasswordHint, setShowPasswordHint] = useState(false);
   const [passwordValid, setPasswordValid] = useState({
     length: false,
     uppercase: false,
     specialChar: false,
-    number: false
+    number: false,
   });
+  const navigate = useNavigate();
 
-  // Password validation function
-  const validatePassword = (password: string) => {
-    const lengthValid = password.length >= 8;
-    const uppercaseValid = /[A-Z]/.test(password);
-    const specialCharValid = /[!@#$%^&*]/.test(password);
-    const numberValid = /[0-9]/.test(password);
-
-    setPasswordValid({
-      length: lengthValid,
-      uppercase: uppercaseValid,
-      specialChar: specialCharValid,
-      number: numberValid
-    });
-
-    return lengthValid && uppercaseValid && specialCharValid && numberValid;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,151 +66,181 @@ export function Register() {
     setShowPasswordHint(newPassword.length > 0);
 
     // Validate password
-    validatePassword(newPassword);
-  };
-
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    setPasswordValid({
+      length: newPassword.length >= 8,
+      uppercase: /[A-Z]/.test(newPassword),
+      specialChar: /[!@#$%^&*]/.test(newPassword),
+      number: /[0-9]/.test(newPassword),
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({}); // Clear previous errors
+
+    // Frontend validation
+    const newErrors: Errors = {};
 
     if (!validateEmail(formData.email)) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        email: 'Invalid email format'
-      }));
-      return;
+      newErrors.email = 'Invalid email format';
     }
 
     if (!validatePassword(formData.password)) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        password: 'Password does not meet requirements'
-      }));
-      return;
+      newErrors.password = 'Password must be at least 6 characters';
     }
 
-    // Check if password and confirm password match
     if (formData.password !== formData.confirmPassword) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        confirmPassword: 'Passwords do not match'
-      }));
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    // TODO: Implement registration logic with Supabase
-    navigate('/rate-movies');
+    // Submit to API
+    try {
+      const response = await fetch('http://54.177.14.82:8000/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          password: formData.password,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Save user info & authenticated flag to localStorage
+        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('authenticated', JSON.stringify(data.authenticated));
+        navigate('/rate-movies'); // Redirect after success
+      } else if (response.status === 422) {
+        const errorData = await response.json();
+        const backendErrors: Record<string, string> = {};
+
+        if (Array.isArray(errorData.detail)) {
+          errorData.detail.forEach((error: { loc: string[]; msg: string }) => {
+            const field = error.loc[1];  // Example: ["body", "email"]
+            backendErrors[field] = error.msg;
+          });
+        }
+
+        setErrors(backendErrors);
+      } else {
+        setErrors({ form: 'An unexpected error occurred. Please try again.' });
+      }
+    } catch (error) {
+      setErrors({ form: 'Failed to connect to the server. Please try again later.' });
+    }
   };
 
   return (
-    <div className="min-h-screen bg-purple-50 flex flex-col items-center justify-center p-4">
+    <div className="max-w-md mx-auto mt-10 p-6 border rounded-lg shadow-lg bg-white">
+      <h2 className="text-2xl font-bold mb-4">Register</h2>
 
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
-        <div className="flex items-center justify-center mb-8">
-          <Film size={32} className="text-yellow-500" />
-          <h1 className="text-3xl font-bold ml-2 text-purple-900">FlickPredict</h1>
+      {errors.form && <p className="text-red-600 mb-4">{errors.form}</p>}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium">Username</label>
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded p-2"
+          />
+          {errors.username && <p className="text-red-600 text-sm">{errors.username}</p>}
         </div>
 
-        <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">Create Your Account</h2>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="First Name"
-              value={formData.firstName}
-              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-              error={errors.firstName}
-              required
-            />
-
-            <Input
-              label="Last Name"
-              value={formData.lastName}
-              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-              error={errors.lastName}
-              required
-            />
-          </div>
-
-          <Input
-            label="Username"
-            value={formData.username}
-            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-            error={errors.username}
-            required
-          />
-
-          <Input
-            label="Email"
+        <div>
+          <label className="block text-sm font-medium">Email</label>
+          <input
             type="email"
+            name="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            error={errors.email}
-            required
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded p-2"
           />
+          {errors.email && <p className="text-red-600 text-sm">{errors.email}</p>}
+        </div>
 
-          {/* Password and Confirm Password side by side */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="relative">
-              <Input
-                label="Password"
-                type="password"
-                value={formData.password}
-                onChange={handlePasswordChange}
-                error={errors.password}
-                required
-              />
+        <div>
+          <label className="block text-sm font-medium">First Name</label>
+          <input
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded p-2"
+          />
+          {errors.firstName && <p className="text-red-600 text-sm">{errors.firstName}</p>}
+        </div>
 
-              {/* Password Validation Pop-up */}
-              {showPasswordHint && (
-                <div className="absolute left-0 top-full mt-2 bg-white shadow-lg p-2 rounded-lg border border-gray-300 text-sm w-56">
-                  <p className={passwordValid.length ? 'text-green-600' : 'text-red-600'}>
-                    ✔ At least 8 characters
-                  </p>
-                  <p className={passwordValid.uppercase ? 'text-green-600' : 'text-red-600'}>
-                    ✔ At least one uppercase letter
-                  </p>
-                  <p className={passwordValid.specialChar ? 'text-green-600' : 'text-red-600'}>
-                    ✔ At least one special character (!@#$%^&*)
-                  </p>
-                  <p className={passwordValid.number ? 'text-green-600' : 'text-red-600'}>
-                    ✔ At least one number (0-9)
-                  </p>
-                </div>
-              )}
+        <div>
+          <label className="block text-sm font-medium">Last Name</label>
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded p-2"
+          />
+          {errors.lastName && <p className="text-red-600 text-sm">{errors.lastName}</p>}
+        </div>
+
+        <div className="relative">
+          <label className="block text-sm font-medium">Password</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handlePasswordChange}
+            className="mt-1 block w-full border rounded p-2"
+          />
+          {showPasswordHint && (
+            <div className="absolute left-0 top-full mt-2 bg-white shadow-lg p-2 rounded-lg border border-gray-300 text-sm w-56">
+              <p className={passwordValid.length ? 'text-green-600' : 'text-red-600'}>
+                ✔ At least 8 characters
+              </p>
+              <p className={passwordValid.uppercase ? 'text-green-600' : 'text-red-600'}>
+                ✔ At least one uppercase letter
+              </p>
+              <p className={passwordValid.specialChar ? 'text-green-600' : 'text-red-600'}>
+                ✔ At least one special character (!@#$%^&*)
+              </p>
+              <p className={passwordValid.number ? 'text-green-600' : 'text-red-600'}>
+                ✔ At least one number (0-9)
+              </p>
             </div>
+          )}
+          {errors.password && <p className="text-red-600 text-sm">{errors.password}</p>}
+        </div>
 
-            <Input
-              label="Confirm Password"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              error={errors.confirmPassword}
-              required
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium">Confirm Password</label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded p-2"
+          />
+          {errors.confirmPassword && <p className="text-red-600 text-sm">{errors.confirmPassword}</p>}
+        </div>
 
-          <Button type="submit" className="w-full">
-            Create Account
-          </Button>
-        </form>
-
-        <p className="mt-4 text-center text-gray-600">
-          Already have an account?{' '}
-          <Link to="/login" className="text-purple-600 hover:text-purple-700 font-medium">
-            Sign in
-          </Link>
-        </p>
-      </div>
-
-      {/* Footer */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white p-4 text-center text-purple-900/70 text-sm z-10 border-t-4 border-purple-900">
-        © 2025 FlickPredict. All rights reserved.
-      </div>
+        <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">
+          Create Account
+        </button>
+      </form>
     </div>
   );
-}
+};
+
+export default RegisterForm;
