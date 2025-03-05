@@ -14,6 +14,9 @@ type Movie = {
   rating?: number; // Assuming rating might be added in the future
 };
 
+const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+
+
 const formatJustWatchTitle = (title: string) => title.split(' ').join('-'); // Convert spaces to hyphens
 
 export function Recommend() {
@@ -109,7 +112,7 @@ export function Recommend() {
   
           {/* Page Title */}
           <h2 className="text-2xl font-bold text-white mt-20 mb-6">
-            FlickPredict recommended these movies for Alicia
+            FlickPredict recommended these movies for {storedUser.username}
           </h2>
   
           {/* Active Filters Display */}
