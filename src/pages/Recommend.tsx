@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Film, Menu } from 'lucide-react';
+import { Film } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Link } from 'react-router-dom';
 import { FilterSidebar } from '../components/FilterSidebar';
@@ -24,11 +24,6 @@ export function Recommend() {
     genres: [],
     directors: [],
   });
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
 
   const handleFilterChange = (filters: Record<string, string[]>) => {
     setActiveFilters(filters);
