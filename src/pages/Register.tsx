@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Film } from 'lucide-react';
 import { Button } from '../components/Button';
@@ -23,6 +23,9 @@ export function Register() {
     specialChar: false,
     number: false
   });
+  
+  // Add a ref to store the typing timeout
+  const typingTimeoutRef = useRef<number | null>(null);
 
   // Password validation function
   const validatePassword = (password: string) => {
@@ -46,11 +49,31 @@ export function Register() {
     setFormData({ ...formData, password: newPassword });
 
     // Show validation pop-up when typing
-    setShowPasswordHint(newPassword.length > 0);
-
+    setShowPasswordHint(true);
+    
+    // Clear any existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    
+    // Set a new timeout to hide the hint after typing stops
+    typingTimeoutRef.current = window.setTimeout(() => {
+      // Hide hint after typing has stopped
+      setShowPasswordHint(false);
+    }, 750); // Hide 1.5 seconds after user stops typing
+    
     // Validate password
     validatePassword(newPassword);
   };
+
+  // Clear timeout when component unmounts to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -146,11 +169,12 @@ export function Register() {
                 onChange={handlePasswordChange}
                 error={errors.password}
                 required
+                onFocus={() => setShowPasswordHint(true)}
               />
 
               {/* Password Validation Pop-up */}
               {showPasswordHint && (
-                <div className="absolute left-0 top-full mt-2 bg-white shadow-lg p-2 rounded-lg border border-gray-300 text-sm w-56">
+                <div className="absolute left-0 top-full mt-2 bg-white shadow-lg p-2 rounded-lg border border-gray-300 text-sm w-56 z-10">
                   <p className={passwordValid.length ? 'text-green-600' : 'text-red-600'}>
                     ✔ At least 8 characters
                   </p>

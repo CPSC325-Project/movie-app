@@ -3,3 +3,9 @@
   to = "http://54.177.14.82:8000/:splat"
   status = 200
   force = true
+  headers = { X-Forwarded-Host = "netlify" }
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

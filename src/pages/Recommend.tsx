@@ -14,8 +14,6 @@ type Movie = {
   rating?: number; // Assuming rating might be added in the future
 };
 
-const formatJustWatchTitle = (title: string) => title.split(' ').join('-'); // Convert spaces to hyphens
-
 export function Recommend() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -50,7 +48,8 @@ export function Recommend() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch('/api/movies/sample');
+        const response = await fetch('/api/movies/sample'); // use for when committing
+        //const response = await fetch('http://54.177.14.82:8000/movies/sample'); // use when testing locally
         if (!response.ok) throw new Error('Failed to fetch movies');
         
         const data: Movie[] = await response.json();
@@ -135,18 +134,11 @@ export function Recommend() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-6xl">
             {filteredMovies.map((movie, index) => (
               <div key={index} className="bg-white rounded-lg shadow-lg overflow-hidden">
-                {/* Clickable Image that links to JustWatch */}
-                <a 
-                  href={`https://www.justwatch.com/us/movie/${encodeURIComponent(formatJustWatchTitle(movie.title))}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  <img 
-                    src={movie.image} 
-                    alt={movie.title} 
-                    className="w-full h-68 object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                </a>
+                <img 
+                  src={movie.image} 
+                  alt={movie.title} 
+                  className="w-full h-68 object-cover transition-transform duration-300 hover:scale-105"
+                />
   
                 {/* Movie Details */}
                 <div className="p-4">
