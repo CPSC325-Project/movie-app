@@ -3,6 +3,7 @@ import { Film } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Link } from 'react-router-dom';
 import { FilterSidebar } from '../components/FilterSidebar';
+import { CircularProgress } from '../components/CircularProgress';
 
 type Movie = {
   id: string;
@@ -48,8 +49,8 @@ export function Recommend() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch('/api/movies/sample'); // use for when committing
-        //const response = await fetch('http://54.177.14.82:8000/movies/sample'); // use when testing locally
+        //const response = await fetch('/api/movies/sample'); // use for when committing
+        const response = await fetch('http://54.177.14.82:8000/movies/sample'); // use when testing locally
         if (!response.ok) throw new Error('Failed to fetch movies');
         
         const data: Movie[] = await response.json();
@@ -64,7 +65,7 @@ export function Recommend() {
     fetchMovies();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <CircularProgress />;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
