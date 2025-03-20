@@ -50,7 +50,7 @@ export function Recommend() {
     const fetchMovies = async () => {
       try {
         const response = await fetch('/api/movies/sample'); // use for when committing
-        //const response = await fetch('http://54.177.14.82:8000/movies/sample'); // use when testing locally
+        // const response = await fetch('http://54.177.14.82:8000/movies/sample'); // use when testing locally
         if (!response.ok) throw new Error('Failed to fetch movies');
         
         const data: Movie[] = await response.json();

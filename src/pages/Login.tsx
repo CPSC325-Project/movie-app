@@ -3,6 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Film } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
+import { app } from '../firebase'; // Import the Firebase app instance
+import { getAuth, signInWithEmailAndPassword  } from "firebase/auth";
+
+// Initialize Firebase Authentication
+const auth = getAuth(app);
 
 export function Login() {
   const navigate = useNavigate();
@@ -12,14 +17,28 @@ export function Login() {
   });
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null); // Reset error before attempting login
 
-    // Dummy Login Check
-    if (formData.email === 'adomingo' && formData.password === 'password') {
+    try {
+      // Authenticate user with Firebase
+      const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      console.log("User logged in:", userCredential.user);
+
+      // Redirect to recommendation page upon successful login
       navigate('/recommend');
-    } else {
-      setError('Invalid username or password.');
+    } catch (error: any) {
+      console.error("Login error:", error.code, error.message);
+
+      // Handle specific error messages
+      if (error.code === "auth/user-not-found") {
+        setError("No user found with this email.");
+      } else if (error.code === "auth/wrong-password") {
+        setError("Incorrect password. Please try again.");
+      } else {
+        setError("Failed to log in. Please try again later.");
+      }
     }
   };
 
@@ -35,7 +54,7 @@ export function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Username"
+            label="Email"
             type="text"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}

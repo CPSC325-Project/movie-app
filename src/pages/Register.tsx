@@ -3,6 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Film } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
+import { app } from '../firebase'; // Import the Firebase app instance
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+
+// Initialize Firebase Authentication
+const auth = getAuth(app);
+
 
 export function Register() {
   const navigate = useNavigate();
@@ -82,6 +88,7 @@ export function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({}); // Reset errors before validation
 
     if (!validateEmail(formData.email)) {
       setErrors((prevErrors) => ({
@@ -108,8 +115,22 @@ export function Register() {
       return;
     }
 
-    // TODO: Implement registration logic with Supabase
-    navigate('/rate-movies');
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      const user = userCredential.user;
+
+      console.log("User created:", user);
+
+      // Redirect user to another page (e.g., homepage or login)
+      navigate("/rate-movies"); // Change this to the appropriate route
+    } catch (error: any) {
+      console.error("Error creating user:", error.message);
+      
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        firebase: error.message
+      }));
+    }
   };
 
   return (
