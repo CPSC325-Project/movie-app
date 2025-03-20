@@ -17,7 +17,31 @@ export function About() {
         </div>
         
         <p className="text-lg text-gray-700 mb-6">
-          FlickPredict is a movie recommendation platform, created by Alicia Domingo, Lauren Nguyen, and Jaden Phan,
+          FlickPredict is a movie recommendation platform, created by&nbsp; 
+          <a 
+            href="https://www.linkedin.com/in/alicia-domingo-715394298/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-purple-700 font-semibold hover:underline"
+          >
+            Alicia Domingo
+          </a>,&nbsp;  
+          <a 
+            href="https://www.linkedin.com/in/lauren-nguyen-352263254/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-purple-700 font-semibold hover:underline"
+          >
+            Lauren Nguyen
+          </a>, and&nbsp;
+          <a 
+            href="https://www.linkedin.com/in/jphan10/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-purple-700 font-semibold hover:underline"
+          >
+            Jaden Phan
+          </a>,  
           that uses advanced algorithms to predict your next favorite movie based on your preferences.  
           With an intuitive interface and a variety of genres, FlickPredict helps you find movies you'll love in no time.
         </p>

@@ -1,158 +1,184 @@
-import { Film } from 'lucide-react';
-import { useState } from 'react';
+import { Film, Star, XCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Star, XCircle } from 'lucide-react';
-import { Button } from '../components/Button';
+import noImage from '../components/noImage.jpeg';
 
-const SAMPLE_MOVIES = [
-  {
-    id: '1',
-    title: 'Inception',
-    image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=2000',
-    year: 2010,
-  },
-  {
-    id: '2',
-    title: 'The Shawshank Redemption',
-    image: 'https://images.unsplash.com/photo-1507924538820-ede94a04019d?auto=format&fit=crop&q=80&w=2000',
-    year: 1994,
-  },
-  {
-    id: '3',
-    title: 'Pulp Fiction',
-    image: 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&q=80&w=2000',
-    year: 1994,
-  },
-  {
-    id: '4',
-    title: 'The Matrix',
-    image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=2000',
-    year: 1999,
-  },
-  {
-    id: '5',
-    title: 'Forrest Gump',
-    image: 'https://images.unsplash.com/photo-1533928298208-27ff66555d8d?auto=format&fit=crop&q=80&w=2000',
-    year: 1994,
-  },
-  {
-    id: '6',
-    title: 'The Godfather',
-    image: 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?auto=format&fit=crop&q=80&w=2000',
-    year: 1972,
-  },
-  {
-    id: '7',
-    title: 'Avengers: Endgame',
-    image: 'https://images.unsplash.com/photo-1560932684-5e552e2894e9?auto=format&fit=crop&q=80&w=2000',
-    year: 2019,
-  },
-  {
-    id: '8',
-    title: 'The Dark Knight',
-    image: 'https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?auto=format&fit=crop&q=80&w=2000',
-    year: 2008,
-  },
-  {
-    id: '9',
-    title: 'Interstellar',
-    image: 'https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&q=80&w=2000',
-    year: 2014,
-  },
-  {
-    id: '10',
-    title: 'Spirited Away',
-    image: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&q=80&w=2000',
-    year: 2001,
-  },
-];
+interface Movie {
+  id: string;
+  title: string;
+  image: string;
+  year: number;
+  genres: string;
+}
+
+function LoadingSpinner() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-purple-900">
+      <div className="w-16 h-16 border-4 border-white border-t-yellow-500 rounded-full animate-spin mb-4"></div>
+    </div>
+  );
+}
 
 export function RateMovies() {
   const navigate = useNavigate();
-  const [currentMovie, setCurrentMovie] = useState(0);
-  const [ratings, setRatings] = useState<Record<string, number | null>>({});
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [ratings, setRatings] = useState<Record<string, number>>({});
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hoverRating, setHoverRating] = useState<Record<string, number>>({});
 
-  const handleRate = (rating: number | null) => {
-    setRatings({ ...ratings, [SAMPLE_MOVIES[currentMovie].id]: rating });
+  useEffect(() => {
+    fetchMovies();
+  }, []);
 
-    if (currentMovie < SAMPLE_MOVIES.length - 1) {
-      // Adding delay before moving to the next movie
-      setTimeout(() => {
-        setCurrentMovie(currentMovie + 1);
-      }, 1000); // 1000 ms delay (1 second)
-    }
-
-    // If five movies have been rated, navigate to the recommendations page
-    if (Object.keys(ratings).length === 4) {  // When 5 ratings are complete, the length is 5
-      setTimeout(() => {
-        navigate('/recommend');
-      }, 250);  // Delay the navigation to allow users to see their last rating
+  const fetchMovies = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('http://54.177.14.82:8000/movies/sample');
+      if (!response.ok) {
+        throw new Error('Failed to fetch movies');
+      }
+      const data = await response.json();
+      setMovies(data);
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching movies:', error);
+      setError('Failed to load movies. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const movie = SAMPLE_MOVIES[currentMovie];
-  const currentRating = ratings[movie.id];
+  const formatGenres = (genreString: string) => {
+    return genreString.split('|').join(', ');
+  };
+
+  const handleRate = (movieId: string, rating: number) => {
+    const newRatings = { ...ratings, [movieId]: rating };
+    setRatings(newRatings);
+    
+    // Check if we've rated 5 movies
+    if (Object.keys(newRatings).length === 5) {
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 500);
+    }
+  };
+
+  const handleHaventWatched = async (movieId: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('http://54.177.14.82:8000/movies/sample');
+      if (!response.ok) {
+        throw new Error('Failed to fetch new movie');
+      }
+      const [newMovie] = await response.json();
+      setMovies(prev => prev.map(movie =>
+        movie.id === movieId ? newMovie : movie
+      ));
+      // Clear rating for the new movie
+      const { [movieId]: _, ...restRatings } = ratings;
+      setRatings(restRatings);
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching new movie:', error);
+      setError('Failed to fetch new movie. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen text-red-500">
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
-<div className="min-h-screen bg-purple-900 flex flex-col items-center justify-start p-4">
-  {/* Header with FlickPredict logo */}
-  <div className="flex items-center justify-center mb-8">
-    <Film size={32} className="text-yellow-500" />
-    <h1 className="text-3xl font-bold ml-2 text-white">FlickPredict</h1>
-  </div>
+    <div className="min-h-screen bg-purple-900 flex flex-col items-center p-4">
+      {/* Header */}
+      <div className="flex items-center justify-center mb-8">
+        <Film size={32} className="text-yellow-500" />
+        <h1 className="text-3xl font-bold ml-2 text-white">FlickPredict</h1>
+      </div>
 
-  {/* Main Content */}
-  <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden">
-    <img
-      src={movie.image}
-      alt={movie.title}
-      className="w-full h-64 object-cover"
-    />
-
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-2">{movie.title}</h2>
-      <p className="text-gray-600 mb-6">Released: {movie.year}</p>
-
-      <div className="space-y-4">
-        <p className="text-lg font-medium">How would you rate this movie?</p>
-
-        <div className="flex items-center justify-between">
-          <div className="flex space-x-2">
-            {[1, 2, 3, 4, 5].map((rating) => (
-              <button
-                key={rating}
-                onClick={() => handleRate(rating)}
-                className="p-2 hover:bg-purple-100 rounded-full transition-colors"
-              >
-                <Star
-                  size={32}
-                  className={`${
-                    currentRating !== null && rating <= currentRating
-                      ? 'fill-yellow-400 text-yellow-400'
-                      : 'text-gray-400'
-                  } transition-colors duration-200`}
+      {/* Movies Grid */}
+      <div className="container mx-auto px-4 mb-16">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {movies.map((movie) => (
+            <div key={movie.id} className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
+              {/* Movie Poster */}
+              <div className="relative pt-[150%]"> {/* 2:3 aspect ratio */}
+                <img
+                  src={!movie.image || movie.image === 'https://images.unsplash.com/photo-1500004973?auto=format&fit=crop&q=80&w=2000' ? noImage : movie.image}
+                  alt={movie.title}
+                  className="absolute top-0 left-0 w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = noImage;
+                  }}
                 />
-              </button>
-            ))}
-          </div>
+              </div>
 
-          <Button
-            variant="outline"
-            onClick={() => handleRate(null)}
-            className="flex items-center"
-          >
-            <XCircle className="mr-2" />
-            Haven't Watched
-          </Button>
+              <div className="p-4 flex flex-col flex-grow">
+                <div>
+                  <h3 className="font-bold text-lg mb-2 break-words" title={movie.title}>
+                    {movie.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-2">{movie.year}</p>
+                  <p className="text-sm text-gray-600 break-words flex-grow">
+                    <span className="inline-block">{formatGenres(movie.genres)}</span> • <span>{movie.year}</span>
+                  </p>
+                </div>
+
+                <div className="mt-auto">
+                  {/* Star Rating */}
+                  <div className="flex justify-center mb-3">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        onClick={() => handleRate(movie.id, star)}
+                        onMouseEnter={() => setHoverRating((prev) => ({ ...prev, [movie.id]: star }))}
+                        onMouseLeave={() => setHoverRating((prev) => ({ ...prev, [movie.id]: 0 }))}
+                        className="p-1"
+                      >
+                        <Star
+                          size={20}
+                          className={`${
+                            (hoverRating[movie.id] && star <= hoverRating[movie.id]) || 
+                            (ratings[movie.id] && star <= ratings[movie.id])
+                              ? 'fill-yellow-400 text-yellow-400'
+                              : 'text-gray-400'
+                          } transition-colors duration-200`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Haven't Watched Button */}
+                  <button
+                    onClick={() => handleHaventWatched(movie.id)}
+                    className="w-full flex items-center justify-center px-3 py-2 text-sm border-2 border-purple-600 text-purple-600 rounded-lg hover:text-white hover:bg-purple-600 transition-colors"
+                  >
+                    <XCircle size={16} className="mr-2" />
+                    Haven't Watched
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    </div>
-  </div>
 
-  {/* Rating progress */}
-  <div className="mt-4 text-white">
-    Rated {Object.keys(ratings).length} of 5 required movies
-  </div>
-</div>
+      <div className="bg-white p-4 text-center text-purple-900/70 text-sm mt-8 flex-shrink-0 fixed bottom-0 left-0 w-full z-50">
+        © 2025 FlickPredict. All rights reserved.
+      </div>
+    </div>
   );
 }

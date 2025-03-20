@@ -17,7 +17,7 @@ export function Login() {
 
     // Dummy Login Check
     if (formData.email === 'adomingo' && formData.password === 'password') {
-      navigate('/recommend');
+      navigate('/dashboard');
     } else {
       setError('Invalid username or password.');
     }

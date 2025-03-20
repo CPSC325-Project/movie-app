@@ -7,7 +7,8 @@ import { Register } from './pages/Register';
 import { RateMovies } from './pages/RateMovies';
 import { About } from './pages/About';
 import { HowToUse } from './pages/HowToUse';
-import { Recommend } from './pages/Recommend';
+import { Dashboard } from './pages/Dashboard';
+import { Settings } from './pages/Settings';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -35,7 +36,8 @@ function App() {
           <Route path="/rate-movies" element={<RateMovies />} />
           <Route path="/about" element={<About />} />
           <Route path="/how-to-use" element={<HowToUse />} />
-          <Route path="/recommend" element={<Recommend />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </div>
     </Router>
