@@ -1,17 +1,11 @@
 {
   "hosting": {
+    "site": "movie-app-2fc60",
     "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
     ]
   }
-  
 }
