@@ -4,7 +4,7 @@ import { Film } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { app } from '../firebase'; // Import the Firebase app instance
-import { getAuth, signInWithEmailAndPassword  } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 // Initialize Firebase Authentication
 const auth = getAuth(app);
@@ -42,6 +42,23 @@ export function Login() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      console.log('Google user signed in:', user);
+
+      // After successful login, redirect to a protected page (e.g., homepage or dashboard)
+      navigate('/recommend');
+    } catch (error: any) {
+      console.error('Google Sign-In Error:', error.message);
+      setError('Failed to sign in with Google. Please try again.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-purple-50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
@@ -73,6 +90,9 @@ export function Login() {
 
           <Button type="submit" className="w-full">
             Sign In
+          </Button>
+          <Button type="button" onClick={handleGoogleLogin} className="w-full">
+            Sign in with Google
           </Button>
         </form>
 
