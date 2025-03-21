@@ -4,7 +4,9 @@ import { Film } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { app } from '../firebase'; // Import the Firebase app instance
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
 
 // Initialize Firebase Authentication
 const auth = getAuth(app);
@@ -133,6 +135,21 @@ export function Register() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      console.log("Google user:", user);
+      
+      // Optionally, you can also navigate the user after sign-in
+      navigate("/rate-movies");
+    } catch (error: any) {
+      console.error("Google Sign-In error:", error.message);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-purple-50 flex flex-col items-center justify-center p-4">
 
@@ -224,6 +241,11 @@ export function Register() {
 
           <Button type="submit" className="w-full">
             Create Account
+          </Button>
+
+          {/* Google Sign-In Button */}
+          <Button type="button" className="w-full mt-4 bg-blue-500 text-white" onClick={handleGoogleSignIn}>
+            Sign in with Google
           </Button>
         </form>
 
