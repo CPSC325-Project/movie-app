@@ -50,8 +50,13 @@ export function Recommend() {
     const fetchMovies = async () => {
       try {
         const response = await fetch('/api/movies/sample'); // use for when committing
-        //const response = await fetch('http://54.177.14.82:8000/movies/sample'); // use when testing locally
+        // const response = await fetch('http://54.177.14.82:8000/movies/sample'); // use when testing locally
         if (!response.ok) throw new Error('Failed to fetch movies');
+            // Check if the response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Expected JSON response, but received: ' + contentType);
+        }
         
         const data: Movie[] = await response.json();
         setMovies(data);

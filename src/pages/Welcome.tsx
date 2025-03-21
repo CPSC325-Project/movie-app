@@ -44,7 +44,8 @@ export function Welcome() {
         <div className="mb-12 transform hover:scale-105 transition-transform duration-300">
           <div className="relative w-64 h-64 mx-auto">
             <img 
-              src="https://thumbs.dreamstime.com/b/vintage-film-camera-three-lenses-tripod-pencil-drawing-strokes-beige-background-vintage-film-camera-157690607.jpg" 
+              // src="https://thumbs.dreamstime.com/b/vintage-film-camera-three-lenses-tripod-pencil-drawing-strokes-beige-background-vintage-film-camera-157690607.jpg" 
+              src="/images/vintage_camera.jpg" // Local image for better performance
               alt="Vintage Film Illustration" 
               className="w-full h-full object-contain"
               style={{
