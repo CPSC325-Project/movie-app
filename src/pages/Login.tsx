@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Film } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
-import { app } from '../firebase'; // Import the Firebase app instance
+import { app } from '../firebase';
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 // Initialize Firebase Authentication
