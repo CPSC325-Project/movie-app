@@ -67,7 +67,7 @@ export function Login() {
           <h1 className="text-3xl font-bold ml-2 text-purple-900">FlickPredict</h1>
         </div>
 
-        <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">Welcome Back</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">Welcome Back!</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input

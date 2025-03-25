@@ -12,6 +12,13 @@
         "source": "**",
         "destination": "/index.html"
       }
+    ],
+    "redirects": [
+      {
+        "source": "/api/**",
+        "destination": "http://54.177.14.82:8000/:splat",
+        "type": 301
+      }
     ]
   }
 }

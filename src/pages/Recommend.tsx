@@ -109,7 +109,7 @@ export function Recommend() {
   
           {/* Page Title */}
           <h2 className="text-2xl font-bold text-white mt-20 mb-6">
-            FlickPredict recommended these movies for Alicia
+            FlickPredict recommended these movies for you!
           </h2>
   
           {/* Active Filters Display */}
