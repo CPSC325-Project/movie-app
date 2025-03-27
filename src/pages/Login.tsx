@@ -27,7 +27,7 @@ export function Login() {
       console.log("User logged in:", userCredential.user);
 
       // Redirect to recommendation page upon successful login
-      navigate('/recommend');
+      navigate('/dashboard');
     } catch (error: any) {
       console.error("Login error:", error.code, error.message);
 
@@ -52,7 +52,7 @@ export function Login() {
       console.log('Google user signed in:', user);
 
       // After successful login, redirect to a protected page (e.g., homepage or dashboard)
-      navigate('/recommend');
+      navigate('/dashboard');
     } catch (error: any) {
       console.error('Google Sign-In Error:', error.message);
       setError('Failed to sign in with Google. Please try again.');
