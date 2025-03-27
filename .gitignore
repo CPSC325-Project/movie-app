@@ -70,3 +70,4 @@ node_modules/
 
 # Ignore Firebase config file
 src/firebase.ts
+node_modules
