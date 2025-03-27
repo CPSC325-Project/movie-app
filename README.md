@@ -8,7 +8,7 @@ Getting started:
 To run locally:
 1. run `npm run dev`
 
-To redploy:
+To deploy:
 1. run `npm run build`
 1. run `firebase deploy`
 **if you don't see your changes then try clearing your cookies & cache then redploy**
