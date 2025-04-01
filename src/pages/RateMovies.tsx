@@ -123,6 +123,21 @@ export function RateMovies() {
         rating: data.rating
       }))
     });
+
+    const token = await firebase.auth().currentUser.getIdToken();
+
+    fetch("https://your-api.com/users/ratings", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        ratings: [
+          { movieId: 1, rating: 4.5 }
+        ]
+      })
+    });
     
     navigate('/dashboard');
   };
