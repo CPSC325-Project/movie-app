@@ -2,6 +2,8 @@ import { Film, Star, XCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import noImage from '../components/noImage.jpeg';
+import { app } from '../firebase';
+import { getAuth } from 'firebase/auth';
 
 interface Movie {
   id: string;
@@ -113,7 +115,7 @@ export function RateMovies() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Log the final ratings object
     console.log('Final Ratings:', {
       totalMoviesRated: Object.keys(ratings).length,
@@ -124,7 +126,13 @@ export function RateMovies() {
       }))
     });
 
-    const token = await firebase.auth().currentUser.getIdToken();
+    const auth = getAuth(app);
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      setError('User is not authenticated. Please log in again.');
+      return;
+    }
+    const token = await currentUser.getIdToken();
 
     fetch("https://your-api.com/users/ratings", {
       method: "POST",
