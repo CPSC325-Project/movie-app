@@ -2,9 +2,28 @@ import React, { useState } from 'react';
 import { Bell, Camera, ChevronRight, Film, Key, Lock, LogOut, Mail, Moon, Shield, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/Button';
+import { auth } from '../firebase';
+import { User as FirebaseUser, onAuthStateChanged, getAuth } from 'firebase/auth';
+import { useEffect } from 'react';
 
 export function Settings() {
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  console.log(user?.displayName)
   const [profileImage, setProfileImage] = useState('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200');
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log("Current User:", currentUser);
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+      }
+    });
+  
+    return () => unsubscribe();
+  }, []);
   
   const settingsSections = [
     {
@@ -30,7 +49,8 @@ export function Settings() {
       ]
     }
   ];
-  
+
+
   return (
     <>
       <Link to="/" className="block" style={{ paddingTop: '20px', paddingLeft: '10px' }}>
@@ -41,34 +61,31 @@ export function Settings() {
       </Link>
       <div className="ml-64 p-8 bg-purple-50 min-h-screen">
         <h1 className="text-2xl font-bold text-purple-900 mb-8">Account Settings</h1>
-        
+
         {/* Profile Section */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center space-x-6">
             <div className="relative">
               <img
-                src={profileImage}
+                src={user?.photoURL ?? ''}
                 alt="Profile"
                 className="w-24 h-24 rounded-full object-cover"
               />
               <button 
                 className="absolute bottom-0 right-0 bg-purple-600 p-2 rounded-full text-white hover:bg-purple-700 transition-colors"
-                onClick={() => {
-                  // Handle image upload logic here
-                  console.log('Change profile image');
-                }}
+                onClick={() => console.log('Change profile image')}
               >
                 <Camera size={16} />
               </button>
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-purple-900">John Doe</h2>
-              <p className="text-purple-600">john.doe@example.com</p>
-              <p className="text-sm text-gray-500 mt-1">Member since January 2024</p>
+              <h2 className="text-xl font-semibold text-purple-900">{user?.displayName}</h2>
+              <p className="text-purple-600">{user?.email}</p>
+              {/* <p className="text-sm text-gray-500 mt-1">Member since ???</p> */}
             </div>
           </div>
         </div>
-        
+
         {/* Settings Sections */}
         {settingsSections.map((section, index) => (
           <div key={index} className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -92,16 +109,13 @@ export function Settings() {
             </div>
           </div>
         ))}
-        
+
         {/* Logout Button */}
         <div className="mt-8">
           <Button
             variant="outline"
             className="text-red-600 border-red-600 hover:bg-red-50 flex items-center space-x-2"
-            onClick={() => {
-              // Handle logout here
-              console.log('Logging out');
-            }}
+            onClick={() => auth.signOut().then(() => console.log("Logged out"))}
           >
             <LogOut size={20} />
             <span>Sign Out</span>
