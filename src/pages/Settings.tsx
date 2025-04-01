@@ -80,7 +80,6 @@ export function Settings() {
             <div>
               <h2 className="text-xl font-semibold text-purple-900">{user?.displayName}</h2>
               <p className="text-purple-600">{user?.email}</p>
-              {/* <p className="text-sm text-gray-500 mt-1">Member since ???</p> */}
             </div>
           </div>
         </div>
