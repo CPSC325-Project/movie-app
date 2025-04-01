@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { Bell, Camera, ChevronRight, Film, Key, Lock, LogOut, Mail, Moon, Shield, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/Button';
@@ -9,7 +9,6 @@ import { useEffect } from 'react';
 export function Settings() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   console.log(user?.displayName)
-  const [profileImage, setProfileImage] = useState('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200');
 
   useEffect(() => {
     const auth = getAuth();
