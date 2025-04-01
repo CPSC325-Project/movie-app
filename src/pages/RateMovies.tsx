@@ -115,40 +115,38 @@ export function RateMovies() {
     }
   };
 
-  const handleSubmit = async () => {
-    // Log the final ratings object
-    console.log('Final Ratings:', {
-      totalMoviesRated: Object.keys(ratings).length,
-      ratings: Object.entries(ratings).map(([movieId, data]) => ({
-        movieId,
-        title: data.title,
-        rating: data.rating
-      }))
-    });
-
-    const auth = getAuth(app);
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
-      setError('User is not authenticated. Please log in again.');
-      return;
-    }
-    const token = await currentUser.getIdToken();
-
-    fetch("https://your-api.com/users/ratings", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        ratings: [
-          { movieId: 1, rating: 4.5 }
-        ]
-      })
-    });
+    const handleSubmit = async () => {
+      // Log the final ratings object
+      const finalRatings = {
+        totalMoviesRated: Object.keys(ratings).length,
+        ratings: Object.entries(ratings).map(([movieId, data]) => ({
+          movieId,
+          title: data.title,
+          rating: data.rating
+        }))
+      };
+      console.log('Final Ratings:', finalRatings);
+      
+      const auth = getAuth(app);
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        setError('User is not authenticated. Please log in again.');
+        return;
+      }
+      const token = await currentUser.getIdToken();
     
-    navigate('/dashboard');
-  };
+      fetch("https://your-api.com/users/ratings", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          ratings: finalRatings.ratings  // Using the logged final ratings here
+        })
+      });
+      navigate('/dashboard');
+    };
 
   const handleHaventWatched = async (movieId: string) => {
     try {
