@@ -135,7 +135,7 @@ export function RateMovies() {
       }
       const token = await currentUser.getIdToken();
     
-      fetch("https://your-api.com/users/ratings", {
+      fetch("http://54.177.14.82:8000/users/ratings", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
