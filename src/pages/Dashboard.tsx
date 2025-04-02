@@ -23,7 +23,8 @@ interface Movie {
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const response = await fetch('http://54.177.14.82:8000/movies/sample');
+                // const response = await fetch('http://54.177.14.82:8000/movies/sample'); to test locally
+                const response = await fetch('/api/movies/sample');
                 const data = await response.json();
                 setMovies(data);
                 setFilteredMovies(data); // Initialize filteredMovies with all movies
