@@ -23,7 +23,7 @@ interface Movie {
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                // const response = await fetch('http://54.177.14.82:8000/movies/sample'); to test locally
+                // const response = await fetch('http://54.177.14.82:8000/movies/sample'); // to test locally
                 const response = await fetch('/api/movies/sample'); // when deploying to firebase
                 const data = await response.json();
                 setMovies(data);
