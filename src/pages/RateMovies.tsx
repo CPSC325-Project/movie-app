@@ -34,7 +34,8 @@ export function RateMovies() {
   const fetchMovies = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('http://54.177.14.82:8000/movies/sample');
+      //const response = await fetch('http://54.177.14.82:8000/movies/sample');
+      const response = await fetch('/api/movies/sample');
       if (!response.ok) {
         throw new Error('Failed to fetch movies');
       }
