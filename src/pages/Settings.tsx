@@ -5,8 +5,11 @@ import { Button } from '../components/Button';
 import { auth } from '../firebase';
 import { User as FirebaseUser, onAuthStateChanged, getAuth } from 'firebase/auth';
 import { useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 export function Settings() {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState<FirebaseUser | null>(null);
   console.log(user?.displayName)
 
@@ -28,25 +31,25 @@ export function Settings() {
     {
       title: 'Account',
       items: [
-        { icon: <User size={20} />, label: 'Profile Information', action: 'Edit' },
-        { icon: <Mail size={20} />, label: 'Email Settings', action: 'Change' },
+        // { icon: <User size={20} />, label: 'Profile Information', action: 'Edit' },
+        { icon: <Mail size={20} />, label: 'Email Settings', action: 'Change'},
         { icon: <Key size={20} />, label: 'Password', action: 'Update' }
       ]
-    },
-    {
-      title: 'Preferences',
-      items: [
-        { icon: <Bell size={20} />, label: 'Notifications', action: 'Manage' },
-        { icon: <Moon size={20} />, label: 'Dark Mode', action: 'Toggle' }
-      ]
-    },
-    {
-      title: 'Privacy & Security',
-      items: [
-        { icon: <Shield size={20} />, label: 'Privacy Settings', action: 'Review' },
-        { icon: <Lock size={20} />, label: 'Security Settings', action: 'Manage' }
-      ]
     }
+    // {
+    //   title: 'Preferences',
+    //   items: [
+    //     { icon: <Bell size={20} />, label: 'Notifications', action: 'Manage' },
+    //     { icon: <Moon size={20} />, label: 'Dark Mode', action: 'Toggle' }
+    //   ]
+    // },
+    // {
+    //   title: 'Privacy & Security',
+    //   items: [
+    //     { icon: <Shield size={20} />, label: 'Privacy Settings', action: 'Review' },
+    //     { icon: <Lock size={20} />, label: 'Security Settings', action: 'Manage' }
+    //   ]
+    // }
   ];
 
 
@@ -93,6 +96,12 @@ export function Settings() {
                 <div
                   key={itemIndex}
                   className="flex items-center justify-between p-3 hover:bg-purple-50 rounded-lg transition-colors cursor-pointer"
+                  onClick={() => {
+                    if (item.label === "Password") {
+                      console.log("Update Password clicked");
+                      navigate("/update-password"); // Navigate to update password page
+                    }
+                  }}
                 >
                   <div className="flex items-center space-x-4">
                     <span className="text-purple-600">{item.icon}</span>
