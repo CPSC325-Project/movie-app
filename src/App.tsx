@@ -9,6 +9,8 @@ import { About } from './pages/About';
 import { HowToUse } from './pages/HowToUse';
 import { Dashboard } from './pages/Dashboard';
 import { Settings } from './pages/Settings';
+import { UpdatePassword } from './pages/updatePassword';
+import { ResetPassword } from './pages/ResetPassword';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -38,6 +40,8 @@ function App() {
           <Route path="/how-to-use" element={<HowToUse />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/update-password" element={<UpdatePassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </div>
     </Router>

@@ -102,6 +102,13 @@ export function Login() {
             Create one
           </Link>
         </p>
+
+        <p className="mt-4 text-center text-gray-600">
+          Forgot password?{' '}
+          <Link to="/reset-password" className="text-purple-600 hover:text-purple-700 font-medium">
+            Reset
+          </Link>
+        </p>
       </div>
 
       {/* Footer */}

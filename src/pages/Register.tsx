@@ -5,7 +5,7 @@ import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { app } from '../firebase'; // Import the Firebase app instance
 // import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
 
 
 // Initialize Firebase Authentication
@@ -120,6 +120,12 @@ export function Register() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
+
+      await updateProfile(user, {
+        displayName: `${formData.firstName} ${formData.lastName}`,
+        photoURL: '/images/dog.jpg' // Replace with a default profile picture URL
+      });
+      console.log("User profile updated:", user.displayName, user.photoURL);
 
       console.log("User created:", user);
 
