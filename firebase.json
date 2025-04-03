@@ -20,12 +20,12 @@
     ],
     "rewrites": [
       {
-        "source": "**",
-        "destination": "/index.html"
-      },
-      {
         "source": "/api/**",
         "destination": "http://54.177.14.82:8000/:splat"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
       }
     ]
   }
