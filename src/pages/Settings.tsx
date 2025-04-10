@@ -122,7 +122,11 @@ export function Settings() {
           <Button
             variant="outline"
             className="text-red-600 border-red-600 hover:bg-red-50 flex items-center space-x-2"
-            onClick={() => auth.signOut().then(() => console.log("Logged out"))}
+            onClick={() => {
+                auth.signOut().then(() => console.log("Logged out"));
+                navigate("/"); 
+              }
+            }
           >
             <LogOut size={20} />
             <span>Sign Out</span>

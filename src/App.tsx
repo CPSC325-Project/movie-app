@@ -9,7 +9,7 @@ import { About } from './pages/About';
 import { HowToUse } from './pages/HowToUse';
 import { Dashboard } from './pages/Dashboard';
 import { Settings } from './pages/Settings';
-import { UpdatePassword } from './pages/updatePassword';
+import { UpdatePassword } from './pages/UpdatePassword';
 import { ResetPassword } from './pages/ResetPassword';
 
 function App() {
