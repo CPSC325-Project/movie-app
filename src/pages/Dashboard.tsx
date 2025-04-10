@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { CircularProgress } from '../components/CircularProgress';
 import { FilterSidebar } from '../components/FilterSidebar';
 import noImage from '../components/noImage.jpeg';
+import { app } from '../firebase';
+import { getAuth } from 'firebase/auth';
 
 interface Movie {
     id: string;
@@ -19,11 +21,24 @@ interface Movie {
     const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const response = await fetch('http://54.177.14.82:8000/movies/sample');
+                const auth = getAuth(app);
+                const currentUser = auth.currentUser;
+                if (!currentUser) {
+                    setError('User is not authenticated. Please log in again.');
+                    return;
+                }
+                const token = await currentUser.getIdToken()
+            
+                const response = await fetch("http://54.241.146.33:8000/users/recommendations", {
+                    method: "GET",
+                    headers: {
+                      "Authorization": `Bearer ${token}`,
+                },})
                 const data = await response.json();
                 setMovies(data);
                 setFilteredMovies(data); // Initialize filteredMovies with all movies

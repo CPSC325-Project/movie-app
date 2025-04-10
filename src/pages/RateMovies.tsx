@@ -38,7 +38,7 @@ export function RateMovies() {
   const fetchMovies = async () => {
     try {
       setIsInitialLoading(true);
-      const response = await fetch('http://54.177.14.82:8000/movies/sample');
+      const response = await fetch('http://54.241.146.33:8000/movies/sample');
       if (!response.ok) {
         throw new Error('Failed to fetch movies');
       }
@@ -55,7 +55,7 @@ export function RateMovies() {
 
   const fetchNewMovie = async () => {
     try {
-      const response = await fetch('http://54.177.14.82:8000/movies/sample');
+      const response = await fetch('http://54.241.146.33:8000/movies/sample');
       if (!response.ok) {
         throw new Error('Failed to fetch new movie');
       }
@@ -135,7 +135,7 @@ export function RateMovies() {
       }
       const token = await currentUser.getIdToken();
     
-      fetch("http://54.177.14.82:8000/users/ratings", {
+      fetch("http://54.241.146.33:8000/users/ratings", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
