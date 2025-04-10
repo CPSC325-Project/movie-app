@@ -32,7 +32,7 @@ export function Settings() {
       title: 'Account',
       items: [
         // { icon: <User size={20} />, label: 'Profile Information', action: 'Edit' },
-        { icon: <Mail size={20} />, label: 'Email Settings', action: 'Change'},
+        // { icon: <Mail size={20} />, label: 'Email Settings', action: 'Change'},
         { icon: <Key size={20} />, label: 'Password', action: 'Update' }
       ]
     }
