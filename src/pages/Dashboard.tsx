@@ -21,7 +21,7 @@ interface Movie {
     const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
-    const [error, setError] = useState<string | null>(null);
+    const [error ,setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchMovies = async () => {
