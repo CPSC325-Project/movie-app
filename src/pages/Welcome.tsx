@@ -26,11 +26,6 @@ export function Welcome() {
             How to Use
           </Button>
         </Link>
-        <Link to="#">
-          <Button variant="outline" className="border-yellow-400 text-white hover:bg-white/20">
-             Resources
-          </Button>
-        </Link>
       </nav>
 
       {/* Main Content */}
@@ -64,12 +59,12 @@ export function Welcome() {
         
         <div className="space-x-4">
           <Link to="/login">
-            <Button variant="primary">
+            <Button variant="primary" className='border border-white hover:bg-purple-800'>
               Sign In
             </Button>
           </Link>
           <Link to="/register">
-            <Button variant="secondary">
+            <Button variant="secondary" className='border border-white'>
               Create Account
             </Button>
           </Link>

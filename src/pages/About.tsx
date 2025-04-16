@@ -41,8 +41,16 @@ export function About() {
             className="text-purple-700 font-semibold hover:underline"
           >
             Jaden Phan
-          </a>,  
-          that uses advanced algorithms to predict your next favorite movie based on your preferences.  
+          </a>, with the mentorship of Gonzaga University professor,&nbsp;
+          <a
+            href="https://www.linkedin.com/in/grahammorehead/"  
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-purple-700 font-semibold hover:underline"
+          >
+            Graham Morehead
+          </a>
+          , that uses advanced algorithms to predict your next favorite movie based on your preferences.  
           With an intuitive interface and a variety of genres, FlickPredict helps you find movies you'll love in no time.
         </p>
 

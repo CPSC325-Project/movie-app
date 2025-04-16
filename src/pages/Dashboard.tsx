@@ -1,4 +1,4 @@
-import { Film, Heart, Settings, Search, Star } from 'lucide-react';
+import { Film, Heart, Settings, Search } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -21,7 +21,7 @@ interface Movie {
     const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
-    const [error ,setError] = useState<string | null>(null);
+    const [___ ,setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -155,10 +155,12 @@ interface Movie {
                                                     <h4 className="font-semibold text-purple-900 whitespace-normal break-words" title={movie.title}>
                                                         {movie.title}
                                                     </h4>
-                                                    <div className="flex items-center">
+                                                    
+                                                    {/* <div className="flex items-center">
                                                         <Star className="text-yellow-400" size={16} />
                                                         <span className="ml-1 text-sm text-gray-600">4.5</span>
-                                                    </div>
+                                                    </div> */}
+                                                    
                                                 </div>
                                                 <p className="text-sm text-gray-600 break-words flex-grow">
                                                     <span className="inline-block">{formatGenres(movie.genres)}</span> • <span>{movie.year}</span>

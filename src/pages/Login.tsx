@@ -91,21 +91,30 @@ export function Login() {
           <Button type="submit" className="w-full">
             Sign In
           </Button>
-          <Button type="button" onClick={handleGoogleLogin} className="w-full">
+          <Button
+            type="button"
+            className="w-full mt-2 bg-white text-black border-2 border-blue-500 flex hover:bg-blue-100 items-center justify-center gap-2"
+            onClick={handleGoogleLogin}
+          >
+            <img
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              alt="Google logo"
+              className="w-5 h-5"
+            />
             Sign in with Google
           </Button>
         </form>
 
         <p className="mt-4 text-center text-gray-600">
           Don't have an account?{' '}
-          <Link to="/register" className="text-purple-600 hover:text-purple-700 font-medium">
+          <Link to="/register" className="text-purple-600 hover:text-purple-700 hover:underline font-medium">
             Create one
           </Link>
         </p>
 
         <p className="mt-4 text-center text-gray-600">
           Forgot password?{' '}
-          <Link to="/reset-password" className="text-purple-600 hover:text-purple-700 font-medium">
+          <Link to="/reset-password" className="text-purple-600 hover:text-purple-700 hover:underline font-medium">
             Reset
           </Link>
         </p>
