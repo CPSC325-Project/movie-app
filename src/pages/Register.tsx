@@ -5,7 +5,7 @@ import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { app } from '../firebase'; // Import the Firebase app instance
 // import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
 
 
 // Initialize Firebase Authentication
@@ -120,6 +120,12 @@ export function Register() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
+
+      await updateProfile(user, {
+        displayName: `${formData.firstName} ${formData.lastName}`,
+        photoURL: '/images/dog.jpg' // Replace with a default profile picture URL
+      });
+      console.log("User profile updated:", user.displayName, user.photoURL);
 
       console.log("User created:", user);
 
@@ -244,14 +250,19 @@ export function Register() {
           </Button>
 
           {/* Google Sign-In Button */}
-          <Button type="button" className="w-full mt-4 bg-blue-500 text-white" onClick={handleGoogleSignIn}>
-            Sign in with Google
+          <Button type="button" className="w-full mt-4 bg-white text-black border-2 border-blue-500 flex hover:bg-blue-100 items-center justify-center gap-2" onClick={handleGoogleSignIn}>
+            <img
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              alt="Google logo"
+              className="w-5 h-5"
+            />
+            Create Account with Google
           </Button>
         </form>
 
         <p className="mt-4 text-center text-gray-600">
           Already have an account?{' '}
-          <Link to="/login" className="text-purple-600 hover:text-purple-700 font-medium">
+          <Link to="/login" className="text-purple-600 hover:text-purple-700 hover:underline font-medium">
             Sign in
           </Link>
         </p>

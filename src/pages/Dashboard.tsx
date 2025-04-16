@@ -1,10 +1,12 @@
-import { Film, Heart, Settings, Search, Star } from 'lucide-react';
+import { Film, Heart, Settings, Search } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { CircularProgress } from '../components/CircularProgress';
 import { FilterSidebar } from '../components/FilterSidebar';
 import noImage from '../components/noImage.jpeg';
+import { app } from '../firebase';
+import { getAuth } from 'firebase/auth';
 
 interface Movie {
     id: string;
@@ -19,12 +21,24 @@ interface Movie {
     const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
+    const [___ ,setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                // const response = await fetch('http://54.177.14.82:8000/movies/sample'); to test locally
-                const response = await fetch('/api/movies/sample'); // when deploying to firebase
+                const auth = getAuth(app);
+                const currentUser = auth.currentUser;
+                if (!currentUser) {
+                    setError('User is not authenticated. Please log in again.');
+                    return;
+                }
+                const token = await currentUser.getIdToken()
+            
+                const response = await fetch("http://54.241.146.33:8000/users/recommendations", {
+                    method: "GET",
+                    headers: {
+                      "Authorization": `Bearer ${token}`,
+                },})
                 const data = await response.json();
                 setMovies(data);
                 setFilteredMovies(data); // Initialize filteredMovies with all movies
@@ -141,10 +155,12 @@ interface Movie {
                                                     <h4 className="font-semibold text-purple-900 whitespace-normal break-words" title={movie.title}>
                                                         {movie.title}
                                                     </h4>
-                                                    <div className="flex items-center">
+                                                    
+                                                    {/* <div className="flex items-center">
                                                         <Star className="text-yellow-400" size={16} />
                                                         <span className="ml-1 text-sm text-gray-600">4.5</span>
-                                                    </div>
+                                                    </div> */}
+                                                    
                                                 </div>
                                                 <p className="text-sm text-gray-600 break-words flex-grow">
                                                     <span className="inline-block">{formatGenres(movie.genres)}</span> • <span>{movie.year}</span>
