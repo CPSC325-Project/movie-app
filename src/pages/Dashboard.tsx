@@ -146,28 +146,28 @@ export function Dashboard() {
             <p className="text-purple-600">Here are your personalized movie recommendations</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="relative h-10">
-                <input
+            <div className="relative">
+              <input
                 type="text"
                 placeholder="Search movies..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 h-full text-sm rounded-xl border border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-                <Search className="absolute left-3 top-2.5 text-purple-400" size={20} />
+                className="pl-10 pr-4 py-2 rounded-lg border border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              <Search className="absolute left-3 top-2.5 text-purple-400" size={20} />
             </div>
             <select
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
-                className="h-10 text-sm px-3 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="border border-purple-300 rounded px-3 py-2 text-sm"
             >
-                <option value="">Sort by...</option>
-                <option value="title-asc">Title (A–Z)</option>
-                <option value="title-desc">Title (Z–A)</option>
-                <option value="year-asc">Year (Oldest → Newest)</option>
-                <option value="year-desc">Year (Newest → Oldest)</option>
+              <option value="">Sort by...</option>
+              <option value="title-asc">Title (A–Z)</option>
+              <option value="title-desc">Title (Z–A)</option>
+              <option value="year-asc">Year (Oldest → Newest)</option>
+              <option value="year-desc">Year (Newest → Oldest)</option>
             </select>
-        </div>
+          </div>
         </div>
 
         <section className="mb-12">
