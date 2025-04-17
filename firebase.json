@@ -27,7 +27,7 @@
     "redirects": [
       {
         "source": "/api/**",
-        "destination": "http://54.177.14.82:8000/:splat",
+        "destination": "http://54.241.146.33:8000/:splat",
         "type": 301
       }
     ]
