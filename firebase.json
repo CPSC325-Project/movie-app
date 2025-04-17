@@ -22,13 +22,10 @@
       {
         "source": "**",
         "destination": "/index.html"
-      }
-    ],
-    "redirects": [
+      },
       {
         "source": "/api/**",
-        "destination": "http://54.241.146.33:8000/:splat",
-        "type": 301
+        "destination": "http://54.241.146.33:8000/:splat"
       }
     ]
   }
