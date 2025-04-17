@@ -7,7 +7,6 @@ import { FilterSidebar } from '../components/FilterSidebar';
 import noImage from '../components/noImage.jpeg';
 import { app } from '../firebase';
 import { User as FirebaseUser, getAuth, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebase';
 
 interface Movie {
   id: string;
@@ -20,9 +19,10 @@ interface Movie {
 export function Dashboard() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({ genres: [], decades: [] });
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [__, setError] = useState<string | null>(null);
+  const [sortOption, setSortOption] = useState('');
   const [user, setUser] = useState<FirebaseUser | null>(null);
 
   useEffect(() => {
@@ -47,7 +47,6 @@ export function Dashboard() {
           setLoading(false);
         }
       } else {
-        setError('User is not authenticated. Please log in again.');
         setLoading(false);
       }
     });
@@ -55,18 +54,54 @@ export function Dashboard() {
     return () => unsubscribe();
   }, []);
 
-  const formatGenres = (genreString: string) => {
-    return genreString.split('|').join(', ');
+  const formatGenres = (genreString: string) => genreString.split('|').join(', ');
+
+  const applyFilters = (filters: Record<string, string[]>, query: string, sort = sortOption) => {
+    let filtered = movies.filter((movie) => {
+      const matchesGenre =
+        filters.genres.length === 0 ||
+        filters.genres.some((genre) => movie.genres.includes(genre));
+
+      const matchesDecade =
+        filters.decades.length === 0 ||
+        filters.decades.some((decade) => {
+          const startYear = parseInt(decade.slice(0, 4), 10);
+          return movie.year >= startYear && movie.year < startYear + 10;
+        });
+
+      const matchesSearch =
+        query.trim() === '' ||
+        movie.title.toLowerCase().includes(query.trim().toLowerCase());
+
+      return matchesGenre && matchesDecade && matchesSearch;
+    });
+
+    filtered.sort((a, b) => {
+      switch (sort) {
+        case 'title-asc':
+          return a.title.localeCompare(b.title);
+        case 'title-desc':
+          return b.title.localeCompare(a.title);
+        case 'year-asc':
+          return a.year - b.year;
+        case 'year-desc':
+          return b.year - a.year;
+        default:
+          return 0;
+      }
+    });
+
+    setFilteredMovies(filtered);
   };
 
   const handleFilterChange = (filters: Record<string, string[]>) => {
-    const filtered = movies.filter(
-      (movie) =>
-        filters.genres.length === 0 ||
-        filters.genres.some((genre) => movie.genres.includes(genre))
-    );
-    setFilteredMovies(filtered);
+    setActiveFilters(filters);
+    applyFilters(filters, searchQuery, sortOption);
   };
+
+  useEffect(() => {
+    applyFilters(activeFilters, searchQuery, sortOption);
+  }, [searchQuery, sortOption]);
 
   return (
     <div className="flex flex-col min-h-screen bg-purple-50">
@@ -106,35 +141,37 @@ export function Dashboard() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h2 className="text-2xl font-bold text-purple-900">
-              {user?.displayName
-                ? `Welcome back, ${user.displayName.split(' ')[0]}!`
-                : 'Welcome back!'}
+              {user?.displayName ? `Welcome back, ${user.displayName.split(' ')[0]}!` : 'Welcome back!'}
             </h2>
-            <p className="text-purple-600">
-              Here are your personalized movie recommendations
-            </p>
+            <p className="text-purple-600">Here are your personalized movie recommendations</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <input
+            <div className="relative h-10">
+                <input
                 type="text"
                 placeholder="Search movies..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 rounded-lg border border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <Search
-                className="absolute left-3 top-2.5 text-purple-400"
-                size={20}
-              />
+                className="pl-10 pr-4 h-full text-sm rounded-xl border border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+                <Search className="absolute left-3 top-2.5 text-purple-400" size={20} />
             </div>
-          </div>
+            <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+                className="h-10 text-sm px-3 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+                <option value="">Sort by...</option>
+                <option value="title-asc">Title (A–Z)</option>
+                <option value="title-desc">Title (Z–A)</option>
+                <option value="year-asc">Year (Oldest → Newest)</option>
+                <option value="year-desc">Year (Newest → Oldest)</option>
+            </select>
+        </div>
         </div>
 
         <section className="mb-12">
-          <h3 className="text-xl font-semibold text-purple-900 mb-4">
-            Recommended for You
-          </h3>
+          <h3 className="text-xl font-semibold text-purple-900 mb-4">Recommended for You</h3>
           <div className="relative h-full">
             <div className="overflow-y-auto pr-2 hide-scrollbar h-full">
               {loading ? (
@@ -143,8 +180,7 @@ export function Dashboard() {
                 </div>
               ) : filteredMovies.length === 0 ? (
                 <div className="text-center text-purple-700 text-lg font-semibold p-6">
-                  No movies found for the selected filters. Try selecting
-                  different genres.
+                  No movies found. Try adjusting your filters or search.
                 </div>
               ) : (
                 <div className="grid grid-cols-4 gap-6">
@@ -157,8 +193,7 @@ export function Dashboard() {
                         <img
                           src={
                             !movie.image ||
-                            movie.image ===
-                              'https://images.unsplash.com/photo-1500004973?auto=format&fit=crop&q=80&w=2000'
+                            movie.image === 'https://images.unsplash.com/photo-1500004973?auto=format&fit=crop&q=80&w=2000'
                               ? noImage
                               : movie.image
                           }
@@ -171,19 +206,14 @@ export function Dashboard() {
                         />
                       </div>
                       <div className="p-4 flex flex-col flex-grow">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4
-                            className="font-semibold text-purple-900 whitespace-normal break-words"
-                            title={movie.title}
-                          >
-                            {movie.title}
-                          </h4>
-                        </div>
+                        <h4
+                          className="font-semibold text-purple-900 whitespace-normal break-words mb-2"
+                          title={movie.title}
+                        >
+                          {movie.title}
+                        </h4>
                         <p className="text-sm text-gray-600 break-words flex-grow">
-                          <span className="inline-block">
-                            {formatGenres(movie.genres)}
-                          </span>{' '}
-                          • <span>{movie.year}</span>
+                          <span>{formatGenres(movie.genres)}</span> • <span>{movie.year}</span>
                         </p>
                         <div className="mt-auto">
                           <Button variant="primary" className="w-full">

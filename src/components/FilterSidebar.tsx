@@ -17,26 +17,18 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
     decades: [],
   });
 
-  const [categories, setCategories] = useState<FilterCategory[]>([
-    {
-      name: 'Decades',
-      options: ['1990s', '2000s', '2010s', '2020s'],
-      expanded: false,
-    },
-    {
-      name: 'Genres',
-      options: ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Drama', 'Horror', 'Fantasy', 'IMAX', 'Sci-Fi', 'Thriller', 'Romance', 'Mystery', 'War'],
-      expanded: false,
-    },
+  const [categories] = useState<FilterCategory[]>([
+    { name: 'Decades', options: ['1970s', '1980s', '1990s', '2000s', '2010s', '2020s'], expanded: false },
+    { name: 'Genres', options: ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Drama', 'Horror', 'Fantasy', 'IMAX', 'Sci-Fi', 'Thriller', 'Romance', 'Mystery', 'War'], expanded: false },
   ]);
+  
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  
 
   const toggleCategory = (index: number) => {
-    setCategories((prevCategories) =>
-      prevCategories.map((category, i) =>
-        i === index ? { ...category, expanded: !category.expanded } : category
-      )
-    );
+    setExpandedIndex((prev) => (prev === index ? null : index));
   };
+  
 
   const toggleFilter = (category: string, option: string) => {
     setSelectedFilters((prev) => {
@@ -92,12 +84,12 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
               className="flex justify-between items-center w-full text-left font-semibold mb-2 text-purple-600 transition-colors hover:text-purple-800"
             >
               <span>{category.name}</span>
-              <span className="text-lg">{category.expanded ? '−' : '+'}</span>
+              <span className="text-lg">{expandedIndex === index ? '−' : '+'}</span>
             </button>
 
             <div
               className={`ml-2 space-y-2 transition-all ${
-                category.expanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+                expandedIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
               }`}
             >
               {category.options.map((option, optIndex) => {
