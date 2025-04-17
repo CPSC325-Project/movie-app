@@ -104,9 +104,9 @@ export function Login() {
           <Button type="submit" className="w-full">
             Sign In
           </Button>
-          <Button
+          <button
             type="button"
-            className="w-full mt-2 bg-white text-black border-2 border-blue-500 flex hover:bg-blue-100 items-center justify-center gap-2"
+            className="px-4 py-2 rounded-lg font-medium w-full mt-2 bg-white text-black border-2 border-blue-500 flex hover:bg-blue-100 items-center justify-center gap-2"
             onClick={handleGoogleLogin}
           >
             <img
@@ -115,7 +115,7 @@ export function Login() {
               className="w-5 h-5"
             />
             Sign in with Google
-          </Button>
+          </button>
         </form>
 
         <p className="mt-4 text-center text-gray-600">

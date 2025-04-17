@@ -59,12 +59,12 @@ export function Welcome() {
         
         <div className="space-x-4">
           <Link to="/login">
-            <Button variant="primary" className='border border-white hover:bg-purple-800'>
+            <Button variant="primary" className='hover:bg-purple-800'>
               Sign In
             </Button>
           </Link>
           <Link to="/register">
-            <Button variant="secondary" className='border border-white'>
+            <Button variant="secondary">
               Create Account
             </Button>
           </Link>
