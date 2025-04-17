@@ -34,7 +34,7 @@ interface Movie {
                 }
                 const token = await currentUser.getIdToken()
             
-                const response = await fetch("http://54.241.146.33:8000/users/recommendations", {
+                const response = await fetch("/api/users/recommendations", {
                     method: "GET",
                     headers: {
                       "Authorization": `Bearer ${token}`,
