@@ -23,7 +23,7 @@ export function Welcome() {
         </Link>
         <Link to="/how-to-use">
           <Button variant="outline" className="border-yellow-400 text-white hover:bg-white/20">
-            How to Use?
+            How to Use
           </Button>
         </Link>
       </nav>

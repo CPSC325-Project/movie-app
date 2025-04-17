@@ -4,7 +4,7 @@ import { Film } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { app } from '../firebase';
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from "firebase/auth";
 
 // Initialize Firebase Authentication
 const auth = getAuth(app);
@@ -44,20 +44,33 @@ export function Login() {
 
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
-
+  
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
+  
       console.log('Google user signed in:', user);
-
-      // After successful login, redirect to a protected page (e.g., homepage or dashboard)
       navigate('/dashboard');
     } catch (error: any) {
       console.error('Google Sign-In Error:', error.message);
-      setError('Failed to sign in with Google. Please try again.');
+  
+      // Fallback to redirect if popup fails due to being blocked or closed
+      if (
+        error.code === 'auth/popup-blocked' ||
+        error.code === 'auth/popup-closed-by-user' ||
+        error.code === 'auth/browser-popup-blocked'
+      ) {
+        try {
+          await signInWithRedirect(auth, provider);
+        } catch (redirectError: any) {
+          console.error('Redirect Sign-In Error:', redirectError.message);
+          setError('Failed to sign in with Google. Please try again.');
+        }
+      } else {
+        setError('Failed to sign in with Google. Please try again.');
+      }
     }
-  };
+  };  
 
   return (
     <div className="min-h-screen bg-purple-50 flex flex-col items-center justify-center p-4">
