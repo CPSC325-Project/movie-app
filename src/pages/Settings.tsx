@@ -1,5 +1,5 @@
 import  { useState } from 'react';
-import { Bell, Camera, ChevronRight, Film, Key, Lock, LogOut, Mail, Moon, Shield, User } from 'lucide-react';
+import { Camera, ChevronRight, Film, Key, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { auth } from '../firebase';
@@ -31,27 +31,10 @@ export function Settings() {
     {
       title: 'Account',
       items: [
-        // { icon: <User size={20} />, label: 'Profile Information', action: 'Edit' },
-        // { icon: <Mail size={20} />, label: 'Email Settings', action: 'Change'},
         { icon: <Key size={20} />, label: 'Password', action: 'Update' }
       ]
     }
-    // {
-    //   title: 'Preferences',
-    //   items: [
-    //     { icon: <Bell size={20} />, label: 'Notifications', action: 'Manage' },
-    //     { icon: <Moon size={20} />, label: 'Dark Mode', action: 'Toggle' }
-    //   ]
-    // },
-    // {
-    //   title: 'Privacy & Security',
-    //   items: [
-    //     { icon: <Shield size={20} />, label: 'Privacy Settings', action: 'Review' },
-    //     { icon: <Lock size={20} />, label: 'Security Settings', action: 'Manage' }
-    //   ]
-    // }
   ];
-
 
   return (
     <>

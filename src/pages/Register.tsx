@@ -250,14 +250,18 @@ export function Register() {
           </Button>
 
           {/* Google Sign-In Button */}
-          <Button type="button" className="w-full mt-4 bg-white text-black border-2 border-blue-500 flex hover:bg-blue-100 items-center justify-center gap-2" onClick={handleGoogleSignIn}>
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="w-full mt-4 font-medium bg-white text-black border-2 border-blue-500 flex hover:bg-blue-100 items-center justify-center gap-2 px-4 py-2 rounded-lg transition-all duration-200"
+          >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
               alt="Google logo"
               className="w-5 h-5"
             />
             Create Account with Google
-          </Button>
+          </button>
         </form>
 
         <p className="mt-4 text-center text-gray-600">
