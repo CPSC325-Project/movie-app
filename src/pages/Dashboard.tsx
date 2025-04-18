@@ -1,7 +1,7 @@
-import { Film, Heart, Settings, Search } from 'lucide-react';
-import { Button } from '../components/Button';
-import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Film, Heart, Settings, Search, Menu } from 'lucide-react';
+import { Button } from '../components/Button';
 import { CircularProgress } from '../components/CircularProgress';
 import { FilterSidebar } from '../components/FilterSidebar';
 import noImage from '../components/noImage.jpeg';
@@ -24,6 +24,9 @@ export function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('');
   const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -59,8 +62,7 @@ export function Dashboard() {
   const applyFilters = (filters: Record<string, string[]>, query: string, sort = sortOption) => {
     let filtered = movies.filter((movie) => {
       const matchesGenre =
-        filters.genres.length === 0 ||
-        filters.genres.some((genre) => movie.genres.includes(genre));
+        filters.genres.length === 0 || filters.genres.some((genre) => movie.genres.includes(genre));
 
       const matchesDecade =
         filters.decades.length === 0 ||
@@ -69,9 +71,7 @@ export function Dashboard() {
           return movie.year >= startYear && movie.year < startYear + 10;
         });
 
-      const matchesSearch =
-        query.trim() === '' ||
-        movie.title.toLowerCase().includes(query.trim().toLowerCase());
+      const matchesSearch = query.trim() === '' || movie.title.toLowerCase().includes(query.trim().toLowerCase());
 
       return matchesGenre && matchesDecade && matchesSearch;
     });
@@ -105,7 +105,21 @@ export function Dashboard() {
 
   return (
     <div className="flex flex-col min-h-screen bg-purple-50">
-      <nav className="fixed top-0 left-0 h-screen w-64 bg-white shadow-lg p-6 flex flex-col overflow-y-auto">
+      {/* Hamburger menu (mobile only) */}
+      <button
+        onClick={toggleSidebar}
+        className="md:hidden fixed top-4 left-4 z-50 bg-purple-900 text-white p-2 rounded-md shadow-lg"
+        aria-label="Toggle sidebar"
+      >
+        <Menu size={24} />
+      </button>
+
+      {/* Sidebar */}
+      <nav
+        className={`fixed top-0 left-0 h-screen w-64 bg-white shadow-lg p-6 flex-col overflow-y-auto z-40 transition-transform duration-300 ${
+          sidebarOpen ? 'flex' : 'hidden'
+        } md:flex`}
+      >
         <Link to="/" className="block">
           <div className="flex items-center gap-3 mb-10">
             <Film className="text-yellow-500" size={32} />
@@ -137,37 +151,40 @@ export function Dashboard() {
         </div>
       </nav>
 
-      <main className="ml-64 p-8 flex-grow pb-20">
-        <div className="flex justify-between items-center mb-8">
+      {/* Main Content */}
+      <main className="p-8 flex-grow pb-20 ml-0 md:ml-64 mt-16 md:mt-0">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
             <h2 className="text-2xl font-bold text-purple-900">
               {user?.displayName ? `Welcome back, ${user.displayName.split(' ')[0]}!` : 'Welcome back!'}
             </h2>
             <p className="text-purple-600">Here are your personalized movie recommendations</p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="relative h-10">
-                <input
+
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+            <div className="relative w-full sm:w-auto flex-grow">
+              <input
                 type="text"
                 placeholder="Search movies..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 h-full text-sm rounded-xl border border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-                <Search className="absolute left-3 top-2.5 text-purple-400" size={20} />
+                className="pl-10 pr-4 w-full h-10 text-sm rounded-xl border border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              <Search className="absolute left-3 top-2.5 text-purple-400" size={20} />
             </div>
+
             <select
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
-                className="h-10 text-sm px-3 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="h-10 text-sm px-3 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
-                <option value="">Sort by...</option>
-                <option value="title-asc">Title (A–Z)</option>
-                <option value="title-desc">Title (Z–A)</option>
-                <option value="year-asc">Year (Oldest → Newest)</option>
-                <option value="year-desc">Year (Newest → Oldest)</option>
+              <option value="">Sort by...</option>
+              <option value="title-asc">Title (A–Z)</option>
+              <option value="title-desc">Title (Z–A)</option>
+              <option value="year-asc">Year (Oldest → Newest)</option>
+              <option value="year-desc">Year (Newest → Oldest)</option>
             </select>
-        </div>
+          </div>
         </div>
 
         <section className="mb-12">
@@ -183,7 +200,7 @@ export function Dashboard() {
                   No movies found. Try adjusting your filters or search.
                 </div>
               ) : (
-                <div className="grid grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {filteredMovies.map((movie) => (
                     <div
                       key={movie.id}
@@ -230,9 +247,9 @@ export function Dashboard() {
         </section>
       </main>
 
-      <div className="p-4 text-center text-purple-900/70 text-sm mt-8 flex-shrink-0 fixed bottom-0 left-0 w-full z-50">
+      <footer className="bg-white p-4 text-center text-purple-900/70 text-sm mt-auto">
         © 2025 FlickPredict. All rights reserved.
-      </div>
+      </footer>
     </div>
   );
 }

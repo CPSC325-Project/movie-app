@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import noImage from '../components/noImage.jpeg';
 import { app } from '../firebase';
-import {getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 interface Movie {
   id: string;
@@ -42,17 +42,15 @@ export function RateMovies() {
         setIsInitialLoading(false);
       }
     });
-  
+
     return () => unsubscribe();
   }, []);
 
   const fetchMovies = async () => {
     try {
       setIsInitialLoading(true);
-      const response = await fetch('https://api.flickpredict.com:8000/movies/sample');
-      if (!response.ok) {
-        throw new Error('Failed to fetch movies');
-      }
+      const response = await fetch('http://api.flickpredict.com:8000/movies/sample');
+      if (!response.ok) throw new Error('Failed to fetch movies');
       const data = await response.json();
       setMovies(data);
       setError(null);
@@ -67,9 +65,7 @@ export function RateMovies() {
   const fetchNewMovie = async () => {
     try {
       const response = await fetch('http://api.flickpredict.com:8000/movies/sample');
-      if (!response.ok) {
-        throw new Error('Failed to fetch new movie');
-      }
+      if (!response.ok) throw new Error('Failed to fetch new movie');
       const [newMovie] = await response.json();
       return newMovie;
     } catch (error) {
@@ -78,38 +74,25 @@ export function RateMovies() {
     }
   };
 
-  const formatGenres = (genreString: string) => {
-    return genreString.split('|').join(', ');
-  };
+  const formatGenres = (genreString: string) => genreString.split('|').join(', ');
 
   const handleRate = async (movieId: string, rating: number) => {
     try {
       const movie = movies.find(m => m.id === movieId);
       if (!movie) return;
 
-      // Save the current movie rating to local storage
-      localStorage.setItem('lastRatedMovie', JSON.stringify({
-        movieId,
-        title: movie.title,
-        rating
-      }));
+      localStorage.setItem('lastRatedMovie', JSON.stringify({ movieId, title: movie.title, rating }));
 
-      // Update ratings state immediately
       setRatings(prev => ({
         ...prev,
         [movieId]: { title: movie.title, rating }
       }));
 
-      // Start loading new movie in background
       setLoadingMovieIds(prev => new Set(prev).add(movieId));
-
-      // Fetch and replace the rated movie with a new one
       const newMovie = await fetchNewMovie();
-      setMovies(prev => prev.map(m =>
-        m.id === movieId ? newMovie : m
-      ));
-      
-      // Remove loading state for this movie
+
+      setMovies(prev => prev.map(m => (m.id === movieId ? newMovie : m)));
+
       setLoadingMovieIds(prev => {
         const next = new Set(prev);
         next.delete(movieId);
@@ -117,7 +100,6 @@ export function RateMovies() {
       });
     } catch (error) {
       setError('Failed to fetch new movie after rating. Please try again.');
-      // Remove loading state on error
       setLoadingMovieIds(prev => {
         const next = new Set(prev);
         next.delete(movieId);
@@ -128,14 +110,13 @@ export function RateMovies() {
 
   const handleSubmit = async () => {
     const ratedCount = Object.keys(ratings).length;
-  
     if (ratedCount < 5) {
       setWarning('Please rate at least five movies before submitting.');
       return;
     }
-  
-    setWarning(null); // clear any previous warning
-  
+
+    setWarning(null);
+
     const finalRatings = {
       totalMoviesRated: ratedCount,
       ratings: Object.entries(ratings).map(([movieId, data]) => ({
@@ -144,15 +125,16 @@ export function RateMovies() {
         rating: data.rating
       }))
     };
-  
+
     const auth = getAuth(app);
     const currentUser = auth.currentUser;
     if (!currentUser) {
       setError('User is not authenticated. Please log in again.');
       return;
     }
+
     const token = await currentUser.getIdToken();
-  
+
     await fetch("http://api.flickpredict.com:8000/users/ratings", {
       method: "POST",
       headers: {
@@ -163,7 +145,7 @@ export function RateMovies() {
         ratings: finalRatings.ratings
       })
     });
-  
+
     navigate('/dashboard');
   };
 
@@ -171,19 +153,16 @@ export function RateMovies() {
     try {
       setLoadingMovieIds(prev => new Set(prev).add(movieId));
       const newMovie = await fetchNewMovie();
-      setMovies(prev => prev.map(movie =>
-        movie.id === movieId ? newMovie : movie
-      ));
-      
+      setMovies(prev => prev.map(movie => (movie.id === movieId ? newMovie : movie)));
+
       const { [movieId]: _, ...restRatings } = ratings;
       setRatings(restRatings);
-      
-      // Remove the movie from local storage if it was the last rated
+
       const lastRated = JSON.parse(localStorage.getItem('lastRatedMovie') || '{}');
       if (lastRated.movieId === movieId) {
         localStorage.removeItem('lastRatedMovie');
       }
-      
+
       setError(null);
     } catch (error) {
       console.error('Error fetching new movie:', error);
@@ -201,7 +180,7 @@ export function RateMovies() {
   if (error) return <div className="flex justify-center items-center h-screen text-red-500"><p>{error}</p></div>;
 
   return (
-    <div className="relative min-h-screen bg-purple-900 text-white">
+    <div className="relative min-h-screen bg-purple-900 text-white flex flex-col">
       {/* Background Image */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center opacity-20"
@@ -211,14 +190,14 @@ export function RateMovies() {
         }}
       />
 
-      {/* Foreground Content */}
-      <div className="relative z-10 min-h-screen flex flex-col items-center p-4">
+      {/* Main Content */}
+      <main className="relative z-10 flex-grow flex flex-col items-center p-4">
         <div className="flex items-center justify-center mb-4">
           <Film size={32} className="text-yellow-500" />
           <h1 className="text-3xl font-bold ml-2 text-white">FlickPredict</h1>
         </div>
 
-        <div className="container mx-auto px-4 mb-24">
+        <div className="container mx-auto px-4 mb-12">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {movies.map((movie) => (
               <div key={movie.id} className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
@@ -280,7 +259,8 @@ export function RateMovies() {
           </div>
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 p-4 shadow-lg z-20">
+        {/* Submit bar */}
+        <div className="w-full max-w-4xl mx-auto px-4 mb-6">
           {warning && (
             <div className="text-yellow-300 text-sm text-center mb-2">
               {warning}
@@ -288,12 +268,17 @@ export function RateMovies() {
           )}
           <button 
             onClick={handleSubmit} 
-            className="w-full max-w-md mx-auto font-medium block px-6 py-3 border-2 border-yellow-500 bg-yellow-500 text-white rounded-lg shadow-lg hover:bg-white hover:border-2 hover:border-yellow-500 hover:text-yellow-500 transition-colors"
+            className="w-full justify-center font-medium px-6 py-3 bg-yellow-500 text-white rounded-lg shadow-lg hover:bg-yellow-600 transition-colors"
           >
             Submit Ratings
           </button>
         </div>
-      </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-white text-purple-900/70 text-sm text-center w-full py-4 z-10">
+        © 2025 FlickPredict. All rights reserved.
+      </footer>
     </div>
   );
 }
