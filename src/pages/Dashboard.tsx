@@ -32,7 +32,7 @@ export function Dashboard() {
         setUser(user);
         try {
           const token = await user.getIdToken();
-          const response = await fetch('http://54.241.146.33:8000/users/recommendations', {
+          const response = await fetch('http://api.flickpredict.com:8000/users/recommendations', {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
