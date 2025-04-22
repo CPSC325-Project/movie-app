@@ -4,6 +4,7 @@ import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { app } from "../firebase";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
+import { Film } from "lucide-react";
 
 // Initialize Firebase Authentication
 const auth = getAuth(app);
@@ -36,7 +37,14 @@ export function ResetPassword() {
   return (
     <div className="min-h-screen flex flex-col bg-purple-50">
       <main className="flex-grow flex flex-col items-center justify-center p-4">
+        {/* Form Card */}
         <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+          {/* Logo inside the card */}
+          <div className="flex items-center justify-center mb-6">
+            <Film size={32} className="text-yellow-500" />
+            <h1 className="text-3xl font-bold ml-2 text-purple-900">FlickPredict</h1>
+          </div>
+
           <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">Reset Password</h2>
 
           <form onSubmit={handleResetPassword} className="space-y-4">

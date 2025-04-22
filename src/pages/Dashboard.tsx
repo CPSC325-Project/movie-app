@@ -35,7 +35,7 @@ export function Dashboard() {
         setUser(user);
         try {
           const token = await user.getIdToken();
-          const response = await fetch('http://api.flickpredict.com:8000/users/recommendations', {
+          const response = await fetch('https://api.flickpredict.com/users/recommendations', {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
@@ -113,6 +113,12 @@ export function Dashboard() {
       >
         <Menu size={24} />
       </button>
+
+      {/* Static Logo (Mobile) */}
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-40 flex items-center gap-3 md:hidden">
+        <Film className="text-yellow-400" size={36} />
+        <h1 className="text-3xl font-bold text-purple-900">FlickPredict</h1>
+      </div>
 
       {/* Sidebar */}
       <nav
