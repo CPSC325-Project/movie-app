@@ -35,10 +35,11 @@ export function Dashboard() {
         setUser(user);
         try {
           const token = await user.getIdToken();
-          const response = await fetch('https://api.flickpredict.com/users/recommendations', {
+          const response = await fetch('/api/users/recommendations', {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
             },
           });
           const data = await response.json();

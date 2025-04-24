@@ -49,7 +49,7 @@ export function RateMovies() {
   const fetchMovies = async () => {
     try {
       setIsInitialLoading(true);
-      const response = await fetch('https://api.flickpredict.com/movies/sample');
+      const response = await fetch('/api/movies/sample');
       if (!response.ok) throw new Error('Failed to fetch movies');
       const data = await response.json();
       setMovies(data);
@@ -64,7 +64,7 @@ export function RateMovies() {
 
   const fetchNewMovie = async () => {
     try {
-      const response = await fetch('https://api.flickpredict.com/movies/sample');
+      const response = await fetch('/api/movies/sample');
       if (!response.ok) throw new Error('Failed to fetch new movie');
       const [newMovie] = await response.json();
       return newMovie;
@@ -135,7 +135,7 @@ export function RateMovies() {
 
     const token = await currentUser.getIdToken();
 
-    await fetch("https://api.flickpredict.com/users/ratings", {
+    await fetch("/api/users/ratings", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,
